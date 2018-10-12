@@ -28,7 +28,7 @@ function chain(items) {
 
 function note(audio, frequency) {
     return function() {
-        var duration = 1;
+        var duration = 0.5;
         var sineWave = createSineWave(audio, duration);
         sineWave.frequency.value = frequency;
 
@@ -60,7 +60,7 @@ function createTrack(color, playSound) {
     return { steps: steps, color: color, playSound: playSound}
 };
 
-var BUTTON_SIZE = 26;
+var BUTTON_SIZE = 40;
 
 function buttonPosition(column, row) {
     return {
@@ -97,9 +97,12 @@ function isPointInButton(p, column, row) {
 
 var data = {
     step: 0,
-    tracks: [createTrack("gold", note(audio, 440)),
-             createTrack("gold", note(audio, 200)),
-             createTrack("yellow", kick(audio, 100))]
+    tracks: [createTrack("yellow", note(audio, 440)),
+             createTrack("yellow", note(audio, 100)),
+             createTrack("yellow", note(audio, 880)),
+             createTrack("yellow", note(audio, 523)),
+             createTrack("blue", kick(audio, 100)),
+            ]
 };
 
 //update loop
