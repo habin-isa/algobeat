@@ -30,10 +30,24 @@ function note(audio, frequency) {
     return function() {
         var duration = 1;
         var sineWave = createSineWave(audio, duration);
+        sineWave.frequency.value = frequency;
+
         chain([sineWave,
                 createAmplifier(audio, 0.2, duration),
                 audio.destination]);
         sineWave.connect(audio.destination);
+    }
+};
+
+function kick(audio) {
+    return function() {
+        var duration = 2;
+        var sineWave = createSineWave(audio, duration);
+        rampDown(audio, sineWave.frequency, 160, duration);
+
+        chain([sineWave,
+                createAmplifier(audio, 0.4, duration),
+                audio.destination]);
     }
 };
 
@@ -83,12 +97,18 @@ function isPointInButton(p, column, row) {
 
 var data = {
     step: 0,
-    tracks: [createTrack("gold", note(audio, 440))]
+    tracks: [createTrack("gold", note(audio, 440)),
+             createTrack("gold", note(audio, 200)),
+             createTrack("yellow", kick(audio, 100))]
 };
 
 //update loop
 setInterval(function() {
     data.step = (data.step + 1) % data.tracks[0].steps.length;
+
+    data.tracks 
+        .filter(function(track) { return track.steps[data.step]; })
+        .forEach(function(track) { track.playSound(); });
 }, 100);
 
 // draw loop
@@ -96,7 +116,10 @@ setInterval(function() {
 var screen = document.getElementById("screen").getContext("2d");
 
 (function draw() {
-    drawTracks(screen, data)
+    screen.clearRect(0, 0, screen.canvas.width, screen.canvas.height)
+    drawTracks(screen, data);
+    drawButton(screen, data.step, data.tracks.length, 'black');
+
     requestAnimationFrame(draw);
 })();
 
