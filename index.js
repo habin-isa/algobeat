@@ -41,12 +41,24 @@ function note(audio, frequency) {
 
 function kick(audio) {
     return function() {
-        var duration = 2;
+        var duration = 5;
         var sineWave = createSineWave(audio, duration);
         rampDown(audio, sineWave.frequency, 160, duration);
 
         chain([sineWave,
                 createAmplifier(audio, 0.4, duration),
+                audio.destination]);
+    }
+};
+
+function verb(audio) {
+    return function() {
+        var duration = 10;
+        var sineWave = createSineWave(audio, duration);
+        rampDown(audio, sineWave.frequency, 120, duration);
+
+        chain([sineWave,
+                createAmplifier(audio, 0.2, duration),
                 audio.destination]);
     }
 };
@@ -82,7 +94,7 @@ function drawTracks(screen, data) {
             drawButton(screen, 
                         column, 
                         row, 
-                        on ? track.color : "lightgray")
+                        on ? track.color : "black")
         });
     });
 };
@@ -101,7 +113,10 @@ var data = {
              createTrack("yellow", note(audio, 100)),
              createTrack("yellow", note(audio, 880)),
              createTrack("yellow", note(audio, 523)),
-             createTrack("blue", kick(audio, 100)),
+             createTrack("white", kick(audio), 100),
+             createTrack("white", kick(audio), 100),
+             createTrack("grey", verb(audio, 200)),
+             createTrack("grey", verb(audio, 500)),
             ]
 };
 
